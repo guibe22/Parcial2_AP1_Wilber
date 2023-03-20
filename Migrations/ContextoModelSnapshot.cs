@@ -28,6 +28,9 @@ namespace Parcial2_AP1_Wilber.Migrations
                     b.Property<int>("EmpacadosId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("DetalleEmpacadosId");
 
                     b.HasIndex("EmpacadosId");
@@ -37,7 +40,7 @@ namespace Parcial2_AP1_Wilber.Migrations
 
             modelBuilder.Entity("Empacados", b =>
                 {
-                    b.Property<int>("EmpacadosId")
+                    b.Property<int>("EmpacadoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -51,7 +54,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                     b.Property<DateOnly>("Fecha")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("EmpacadosId");
+                    b.HasKey("EmpacadoId");
 
                     b.ToTable("Empacados");
                 });
