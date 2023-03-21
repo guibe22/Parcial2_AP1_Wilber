@@ -53,7 +53,6 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     EmpacadosId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
                     Cantidad = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

@@ -84,7 +84,7 @@
                     { 
                         <tr>
                             <td>@detalle.ProductoId</td> 
-                            <td>@detalle.Descripcion</td> 
+                            <td>@ProductosBLL.Buscar(detalle.ProductoId).Descripcion</td> 
                             <td>@detalle.Cantidad</td>
                             <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
                                  @onclick=@(() => ElminarDetalle(detalle.DetalleEmpacadosId))> 
@@ -180,11 +180,8 @@
         
         if(detalleEmpacado.Cantidad>0 && detalleEmpacado.ProductoId>0){
             
-           var productoencontrado= ProductosBLL.Buscar(detalleEmpacado.ProductoId);
             empacado.detalleEmpacados.Add(detalleEmpacado);
-            detalleEmpacado.Descripcion = productoencontrado.Descripcion;
             empacado.Cantidad+= detalleEmpacado.Cantidad;
-           
             producto.Existencia= empacado.Cantidad*4;;
             detalleEmpacado = new DetalleEmpacados();
             
