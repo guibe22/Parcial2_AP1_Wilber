@@ -51,12 +51,15 @@ public class EmpacadosBLL
             if(producto!=null){
                 producto.Existencia-= detalle.Cantidad;
                 _Contexto.Entry(producto).State = EntityState.Modified;
+               _Contexto.Set<DetalleEmpacados>().Add(detalle);
             }
         }
 
         var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
          _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
-         _Contexto.Entry(empacado).State = EntityState.Modified;
+         _Contexto.Entry(empacado).State = EntityState.Deleted;
+         _Contexto.SaveChanges();
+         _Contexto.Empacados.Add(empacado);
          return  _Contexto.SaveChanges() >0;
     }
 
@@ -82,6 +85,7 @@ public class EmpacadosBLL
              .Include(o =>  o.detalleEmpacados)
              .AsNoTracking()
              .SingleOrDefault();
+             
     }
 
     public List<Empacados> GetList(Expression<Func<Empacados,bool>>criterio){

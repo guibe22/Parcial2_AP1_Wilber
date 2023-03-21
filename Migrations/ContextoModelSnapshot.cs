@@ -26,6 +26,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("EmpacadosId")
@@ -76,6 +77,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Existencia")

@@ -35,7 +35,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                 {
                     ProductoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
                     Costo = table.Column<double>(type: "REAL", nullable: false),
                     Precio = table.Column<double>(type: "REAL", nullable: false),
                     Existencia = table.Column<int>(type: "INTEGER", nullable: false)
@@ -53,7 +53,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     EmpacadosId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Descripcion = table.Column<string>(type: "TEXT", nullable: true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
                     Cantidad = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

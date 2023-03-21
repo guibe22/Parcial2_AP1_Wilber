@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/{EmpacadoId:int}"
 @inject EmpacadosBLL EmpacadosBLL
 @inject ProductosBLL ProductosBLL
 
@@ -8,20 +9,28 @@
      <div class= "card">
      
          <div class="card-header ">
+            @*Encabezado*@
         <h1> Entrada de Productos Empacados</h1>
          </div>
      
         <div class="card-body">
+            @*input Id y Boton buscar*@
             <div class="row">
                 <div class="col-3">
                     <label for="txtId" class="form-label"> Id:</label>
                     <input type="number"  id="txtId" class="form-control" @bind-value="empacado.EmpacadoId">
                 </div>
+
+                 <div class="col-3 d-flex align-items-end">
+                 <button type="button" class="btn btn-primary" @onclick="Buscar">
+                    <span class="oi oi-magnifying-glass"></span>
+                </button>
+            </div>
                 
             </div>
-             <button name="BtnBuscar" id="BtnBuscar" class="btn btn-primary mr-2" @onclick="Buscar"> Buscar </button>
-
+            
             <div class="row">
+                @*input Fecha y Concepto*@
                 <div class="col-6">
                     <label for="txtFecha" class="form-label"> Fecha:</label>
                     <input type="date"  id="txtFecha" class="form-control" @bind-value="empacado.Fecha">
@@ -30,11 +39,11 @@
                 <div class="col-6">
                     <label for="txtConcepto" class="form-label"> Concepto:</label>
                     <input type="text"  id="txtConcepto" class="form-control" @bind-value="empacado.Concepto">
-                    <ValidationMessage For="@(() => empacado.Concepto)" />
+                    
                 </div>
             </div>
             
-
+            @*input Producto y Cantidad para el detalle*@
             <h3>Utilizados</h3>
 
             <div class="row">
@@ -46,21 +55,28 @@
                              <option value="@producto.ProductoId">@producto.Descripcion</option> 
                          }
                     </InputSelect>
+                    
                 </div>
 
                 <div class="col-4">
-                    <label for="select" class="form-label">Cantidad</label>
+                    <label for="select" class="form-label">Cantidad:</label>
                     <input type="number"  id="txtEjemplo" class="form-control" @bind-value="detalleEmpacado.Cantidad">
+                    
                 </div>
+                <div class="col-3 d-flex align-items-end">
+                 <button type="button" class="btn btn-primary" @onclick="Agregar">
+                    Agregar
+                </button>
             </div>
-             <button name="BtnAgregar" id="BtnAgregar" class="btn btn-primary mr-2" @onclick="Agregar"> Agregar </button>
-
+            
+            @*tabla para mostrar el detalle*@
             <table class="table">
                 <thead>
                     <tr>
                         <th>ProdcutoId</th>
                         <th>Descripcion</th>
                         <th>Cantidad</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,47 +85,65 @@
                         <tr>
                             <td>@detalle.ProductoId</td> 
                             <td>@detalle.Descripcion</td> 
-                            <td>@detalle.Cantidad</td> 
+                            <td>@detalle.Cantidad</td>
+                            <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
+                                 @onclick=@(() => ElminarDetalle(detalle.DetalleEmpacadosId))> 
+                                <span class="oi oi-trash"></span>
+                                </button>
+                                </td>
                         </tr>
                     }
                 </tbody>
                 </table>
                 <label > Total = @empacado.Cantidad</label>
-                
+
+                @*seccion de producidos*@
                 <h3>Producidos</h3>
 
                 <div class="row">
                     <div class="col-6">
-                        <label for="txtDescripcion" class="form-label"> Descripcion;</label>
+                        <label for="txtDescripcion" class="form-label"> Descripcion:</label>
                         <input type="text"  id="txtDescripcion" class="form-control" @bind-value="empacado.Producido">
                     </div>
 
                     <div class="col-6">
                         <label for="txtDescripcion" class="form-label"> Cantidad:</label>
-                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="empacado.Cantidad">
+                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="producto.Existencia">
                     </div>
                 </div>
          </div>
-     
-        <div class="card-footer text-centerc">
+        </div>
+        <div class="card-footer text-center fs-5 ">
+             @*Botones*@
              <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo"> Nuevo </button>
              <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" @onclick="Guardar"> Guardar </button>
              <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar"> Eliminar </button>
          </div>
-     
      </div>
 </EditForm>
 
   
 @code{
+    [Parameter]
+    public int EmpacadoId{get; set;}
     public Empacados empacado { get; set; } = new Empacados();
     public DetalleEmpacados detalleEmpacado{ get; set; } = new DetalleEmpacados();
     public  List<Productos> listaProductos=  new List<Productos>();
     public Productos producto { get; set; } = new Productos();
+    
+   
 
     protected override void OnInitialized()
     {
         listaProductos= ProductosBLL.GetList(o=> true);
+        if(EmpacadoId>0){
+            empacado.EmpacadoId = EmpacadoId;
+            Buscar();
+        }
+        else{
+         empacado.Fecha = DateOnly.FromDateTime(DateTime.Today);
+        }
+        
     
 
     }
@@ -119,7 +153,6 @@
             return;
         }
         if(EmpacadosBLL.Guardar(empacado)){
-            producto.Existencia= empacado.Cantidad;
             producto.Descripcion= empacado.Producido;
             producto.Precio=150;
             producto.Costo= 100;
@@ -136,6 +169,7 @@
             var productoEncontrado = ProductosBLL.Buscar(empacado.Producido);
             if(productoEncontrado!=null){
                 producto= productoEncontrado;
+                 
             }
 
         }
@@ -149,6 +183,8 @@
             empacado.detalleEmpacados.Add(detalleEmpacado);
             detalleEmpacado.Descripcion = productoencontrado.Descripcion;
             empacado.Cantidad+= detalleEmpacado.Cantidad;
+           
+            producto.Existencia= empacado.Cantidad*4;;
             detalleEmpacado = new DetalleEmpacados();
             
         }
@@ -174,7 +210,21 @@
         if(String.IsNullOrEmpty(empacado.Concepto)){ validacion= false;}
         if(empacado.Cantidad<2){ validacion= false;}
         if(empacado.detalleEmpacados.Count<2) {validacion=false;}
+        if(string.IsNullOrEmpty(empacado.Producido)){validacion=false;}
+        if(ProductosBLL.Existe(empacado.Producido)){validacion=false;}
         return validacion;
     }
+
+    void ElminarDetalle(int detalleIdSeleccionado){
+        if(empacado.detalleEmpacados!=null && detalleIdSeleccionado>0 ){
+            empacado.detalleEmpacados.RemoveAll(d => d.DetalleEmpacadosId ==detalleIdSeleccionado );
+           
+           empacado.Cantidad = empacado.detalleEmpacados.Sum(o=> o.Cantidad);
+           producto.Existencia= empacado.Cantidad *4;
+        }
+
+       
+
+}
 
 }

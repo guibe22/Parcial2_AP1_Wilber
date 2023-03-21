@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Parcial2_AP1_Wilber.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230321005245_inicial")]
+    [Migration("20230321180136_inicial")]
     partial class inicial
     {
         /// <inheritdoc />
@@ -29,6 +29,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("EmpacadosId")
@@ -79,6 +80,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Existencia")
