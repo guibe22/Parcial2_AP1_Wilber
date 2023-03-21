@@ -6,5 +6,6 @@ public class DetalleEmpacados
     public int DetalleEmpacadosId { get; set; }
     public int EmpacadosId { get; set; }
     public int ProductoId { get; set; }
+    public String? Descripcion {get;set;}
     public int Cantidad { get; set; }
 }

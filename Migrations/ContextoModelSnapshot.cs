@@ -25,6 +25,9 @@ namespace Parcial2_AP1_Wilber.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("EmpacadosId")
                         .HasColumnType("INTEGER");
 
@@ -52,6 +55,10 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateOnly>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Producido")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("EmpacadoId");

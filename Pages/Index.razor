@@ -1,9 +1,180 @@
 ﻿@page "/"
+@inject EmpacadosBLL EmpacadosBLL
+@inject ProductosBLL ProductosBLL
 
-<PageTitle>Index</PageTitle>
+<EditForm Model="empacado" OnInvalidSubmit="Guardar">
+     <DataAnnotationsValidator/>
+     <ValidationSummary/>
+     <div class= "card">
+     
+         <div class="card-header ">
+        <h1> Entrada de Productos Empacados</h1>
+         </div>
+     
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    <label for="txtId" class="form-label"> Id:</label>
+                    <input type="number"  id="txtId" class="form-control" @bind-value="empacado.EmpacadoId">
+                </div>
+                
+            </div>
+             <button name="BtnBuscar" id="BtnBuscar" class="btn btn-primary mr-2" @onclick="Buscar"> Buscar </button>
 
-<h1>Hello, world!</h1>
+            <div class="row">
+                <div class="col-6">
+                    <label for="txtFecha" class="form-label"> Fecha:</label>
+                    <input type="date"  id="txtFecha" class="form-control" @bind-value="empacado.Fecha">
+                    <ValidationMessage For="@(() => empacado.Fecha)" />
+                </div>
+                <div class="col-6">
+                    <label for="txtConcepto" class="form-label"> Concepto:</label>
+                    <input type="text"  id="txtConcepto" class="form-control" @bind-value="empacado.Concepto">
+                    <ValidationMessage For="@(() => empacado.Concepto)" />
+                </div>
+            </div>
+            
 
-Welcome to your new app.
+            <h3>Utilizados</h3>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            <div class="row">
+                <div class="col-4">
+                    <label for="select" class="form-label">Producto:</label>
+                    <InputSelect class="form-select" @bind-Value="detalleEmpacado.ProductoId">
+                         @foreach (var producto in listaProductos )
+                         {
+                             <option value="@producto.ProductoId">@producto.Descripcion</option> 
+                         }
+                    </InputSelect>
+                </div>
+
+                <div class="col-4">
+                    <label for="select" class="form-label">Cantidad</label>
+                    <input type="number"  id="txtEjemplo" class="form-control" @bind-value="detalleEmpacado.Cantidad">
+                </div>
+            </div>
+             <button name="BtnAgregar" id="BtnAgregar" class="btn btn-primary mr-2" @onclick="Agregar"> Agregar </button>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ProdcutoId</th>
+                        <th>Descripcion</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detalle in empacado.detalleEmpacados)
+                    { 
+                        <tr>
+                            <td>@detalle.ProductoId</td> 
+                            <td>@detalle.Descripcion</td> 
+                            <td>@detalle.Cantidad</td> 
+                        </tr>
+                    }
+                </tbody>
+                </table>
+                <label > Total = @empacado.Cantidad</label>
+                
+                <h3>Producidos</h3>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label for="txtDescripcion" class="form-label"> Descripcion;</label>
+                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="empacado.Producido">
+                    </div>
+
+                    <div class="col-6">
+                        <label for="txtDescripcion" class="form-label"> Cantidad:</label>
+                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="empacado.Cantidad">
+                    </div>
+                </div>
+         </div>
+     
+        <div class="card-footer text-centerc">
+             <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo"> Nuevo </button>
+             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" @onclick="Guardar"> Guardar </button>
+             <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar"> Eliminar </button>
+         </div>
+     
+     </div>
+</EditForm>
+
+  
+@code{
+    public Empacados empacado { get; set; } = new Empacados();
+    public DetalleEmpacados detalleEmpacado{ get; set; } = new DetalleEmpacados();
+    public  List<Productos> listaProductos=  new List<Productos>();
+    public Productos producto { get; set; } = new Productos();
+
+    protected override void OnInitialized()
+    {
+        listaProductos= ProductosBLL.GetList(o=> true);
+    
+
+    }
+
+    void Guardar(){
+        if(!Validar()){
+            return;
+        }
+        if(EmpacadosBLL.Guardar(empacado)){
+            producto.Existencia= empacado.Cantidad;
+            producto.Descripcion= empacado.Producido;
+            producto.Precio=150;
+            producto.Costo= 100;
+            ProductosBLL.Guardar(producto);
+            Nuevo();
+        }
+
+    }
+
+    void Buscar(){
+        var encontrado = EmpacadosBLL.Buscar(empacado.EmpacadoId);
+        if(encontrado!=null){
+            empacado= encontrado;
+            var productoEncontrado = ProductosBLL.Buscar(empacado.Producido);
+            if(productoEncontrado!=null){
+                producto= productoEncontrado;
+            }
+
+        }
+
+    }
+    void Agregar(){
+        
+        if(detalleEmpacado.Cantidad>0 && detalleEmpacado.ProductoId>0){
+            
+           var productoencontrado= ProductosBLL.Buscar(detalleEmpacado.ProductoId);
+            empacado.detalleEmpacados.Add(detalleEmpacado);
+            detalleEmpacado.Descripcion = productoencontrado.Descripcion;
+            empacado.Cantidad+= detalleEmpacado.Cantidad;
+            detalleEmpacado = new DetalleEmpacados();
+            
+        }
+
+    }
+    void Nuevo(){
+        empacado = new Empacados();
+        detalleEmpacado= new DetalleEmpacados();
+        producto= new Productos();
+
+    }
+    void Eliminar(){
+        if(EmpacadosBLL.Existe(empacado.EmpacadoId)){
+            if(EmpacadosBLL.Eliminar(empacado)){
+                ProductosBLL.Eliminar(producto);
+                 Nuevo();
+            } 
+        }
+
+    }
+    bool Validar(){
+        bool validacion = true ;
+        if(String.IsNullOrEmpty(empacado.Concepto)){ validacion= false;}
+        if(empacado.Cantidad<2){ validacion= false;}
+        if(empacado.detalleEmpacados.Count<2) {validacion=false;}
+        return validacion;
+    }
+
+}
