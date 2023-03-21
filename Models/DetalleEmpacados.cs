@@ -4,9 +4,7 @@ public class DetalleEmpacados
 {
     [Key]
     public int DetalleEmpacadosId { get; set; }
-    [Required(ErrorMessage ="el EmpacadoId es requerido.")]
     public int EmpacadosId { get; set; }
-    [Required(ErrorMessage ="el ProductoId es requerido.")]
     public int ProductoId { get; set; }
     [Required(ErrorMessage ="La Descripcion es requerida.")]
     public String? Descripcion {get;set;}
