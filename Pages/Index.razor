@@ -211,7 +211,7 @@
         if(empacado.Cantidad<2){ validacion= false;}
         if(empacado.detalleEmpacados.Count<2) {validacion=false;}
         if(string.IsNullOrEmpty(empacado.Producido)){validacion=false;}
-        if(ProductosBLL.Existe(empacado.Producido)){validacion=false;}
+        if(ProductosBLL.Existe(empacado.Producido) && !ProductosBLL.Existe(empacado.EmpacadoId)){validacion=false;}
         return validacion;
     }
 

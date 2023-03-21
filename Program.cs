@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
-//git add .
-//git commit -m "comentario"
-//git push -u origin main
 
 
 var builder = WebApplication.CreateBuilder(args);
