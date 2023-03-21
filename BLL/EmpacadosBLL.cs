@@ -44,6 +44,9 @@ public class EmpacadosBLL
                 }
             }
         }
+         var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
+         _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
+         _Contexto.SaveChanges();
 
          foreach (var detalle in empacado.detalleEmpacados)
         {
@@ -52,11 +55,11 @@ public class EmpacadosBLL
                 producto.Existencia-= detalle.Cantidad;
                 _Contexto.Entry(producto).State = EntityState.Modified;
                _Contexto.Set<DetalleEmpacados>().Add(detalle);
+               
             }
         }
 
-        var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
-         _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
+       
          _Contexto.Entry(empacado).State = EntityState.Deleted;
          _Contexto.SaveChanges();
          _Contexto.Empacados.Add(empacado);
@@ -76,6 +79,7 @@ public class EmpacadosBLL
         var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
          _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
          _Contexto.Entry(empacado).State = EntityState.Deleted;
+        
          return _Contexto.SaveChanges() >0;
     }
 

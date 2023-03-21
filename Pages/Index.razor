@@ -149,11 +149,12 @@
     }
 
     void Guardar(){
-        if(!Validar()){
-            return;
-        }
+        if(!Validar()){ return;}
+        producto.Descripcion= empacado.Producido;
+        if(ProductosBLL.GetList(o => o.Descripcion==producto.Descripcion).Count==1 &&
+             !ProductosBLL.Existe(producto.ProductoId)){ return;}
         if(EmpacadosBLL.Guardar(empacado)){
-            producto.Descripcion= empacado.Producido;
+            
             producto.Precio=150;
             producto.Costo= 100;
             ProductosBLL.Guardar(producto);
@@ -211,7 +212,7 @@
         if(empacado.Cantidad<2){ validacion= false;}
         if(empacado.detalleEmpacados.Count<2) {validacion=false;}
         if(string.IsNullOrEmpty(empacado.Producido)){validacion=false;}
-        if(ProductosBLL.Existe(empacado.Producido) && !ProductosBLL.Existe(empacado.EmpacadoId)){validacion=false;}
+        
         return validacion;
     }
 

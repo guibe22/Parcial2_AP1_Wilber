@@ -12,10 +12,7 @@ public class ProductosBLL
     public bool Existe(int ProductoId){
          return _Contexto.Productos.Any(o=> o.ProductoId==ProductoId);
     }
-     public bool Existe(String Descripcion){
-         return _Contexto.Productos.Any(o=> o.Descripcion==Descripcion);
-    }
-
+    
     private bool Insertar (Productos producto){
          _Contexto.Productos.Add(producto);
          return _Contexto.SaveChanges() >0;
@@ -25,7 +22,7 @@ public class ProductosBLL
          return  _Contexto.SaveChanges() >0;
     }
     public bool Guardar(Productos producto){
-         if(!Existe(producto.ProductoId)){
+         if(!Existe(producto.ProductoId) ){
              return this.Insertar(producto);
          }
          else{
