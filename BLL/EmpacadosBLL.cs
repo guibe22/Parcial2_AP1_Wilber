@@ -79,11 +79,22 @@ public class EmpacadosBLL
     }
 
      public bool Eliminar (Empacados empacado){
+         foreach (var detalle in empacado.detalleEmpacados)
+        {
+            var producto = _Contexto.Productos.Find(detalle.ProductoId);
+            if(producto!=null){
+                producto.Existencia+= detalle.Cantidad;
+                _Contexto.Entry(producto).State = EntityState.Modified;
+           
+            }
+        }
+
         var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
          _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
          _Contexto.Entry(empacado).State = EntityState.Deleted;
-        
-         return _Contexto.SaveChanges() >0;
+          bool save = _Contexto.SaveChanges() >0;
+        _Contexto.Entry(empacado).State = EntityState.Detached;
+         return  save; 
     }
 
     public Empacados? Buscar(int EmpacadoId){
