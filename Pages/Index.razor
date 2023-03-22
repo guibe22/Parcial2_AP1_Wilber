@@ -182,8 +182,10 @@
             
             empacado.detalleEmpacados.Add(detalleEmpacado);
             empacado.Cantidad+= detalleEmpacado.Cantidad;
-            producto.Existencia= empacado.Cantidad*4;;
+            producto.Existencia= empacado.Cantidad*4;
+            listaProductos.RemoveAll(o=> o.ProductoId == detalleEmpacado.ProductoId);
             detalleEmpacado = new DetalleEmpacados();
+            
             
         }
 

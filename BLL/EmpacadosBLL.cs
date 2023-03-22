@@ -25,7 +25,9 @@ public class EmpacadosBLL
         }
 
          _Contexto.Empacados.Add(empacado);
-         return _Contexto.SaveChanges() >0;
+        bool save = _Contexto.SaveChanges() >0;
+        _Contexto.Entry(empacado).State = EntityState.Detached;
+         return  save;
     }
 
     private bool Modificar (Empacados empacado){
@@ -43,9 +45,10 @@ public class EmpacadosBLL
                     _Contexto.Entry(producto).State = EntityState.Modified;
                 }
             }
+            _Contexto.Entry(empacadoAnterior).State = EntityState.Detached;
         }
        
-        _Contexto.Entry(empacadoAnterior).State = EntityState.Detached;
+        
         
       
 
@@ -55,13 +58,14 @@ public class EmpacadosBLL
             if(producto!=null){
                 producto.Existencia-= detalle.Cantidad;
                 _Contexto.Entry(producto).State = EntityState.Modified;
-           
+                
             }
         }
 
          var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
          _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
          _Contexto.Set<DetalleEmpacados>().AddRange(empacado.detalleEmpacados);
+
          _Contexto.Entry(empacado).State = EntityState.Modified;
          bool save = _Contexto.SaveChanges() >0;
         _Contexto.Entry(empacado).State = EntityState.Detached;
