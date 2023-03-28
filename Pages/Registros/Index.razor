@@ -154,7 +154,9 @@
         if(!Validar()){ return;}
         producto.Descripcion= empacado.Producido;
         if(ProductosBLL.GetList(o => o.Descripcion==producto.Descripcion).Count==1 &&
-             !ProductosBLL.Existe(producto.ProductoId)){ return;}
+             !ProductosBLL.Existe(producto.ProductoId)){ 
+                 notify.ShowNotification("este Nombre de producto empacado ya existe", NotificationSeverity.Success);
+                return;}
         if(EmpacadosBLL.Guardar(empacado)){
             
             producto.Precio=150;
