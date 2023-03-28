@@ -5,16 +5,17 @@
 @inject NotificationService notify
 
 <EditForm Model="empacado" OnValidSubmit="Guardar" >
-     <DataAnnotationsValidator/>
-     <ValidationSummary/>
-     <div class= "card text-primary">
      
+     <div class= "card text-primary">
+        
          <div class="card-header text-center  ">
             @*Encabezado*@
         <h1> Entrada de Productos Empacados</h1>
          </div>
      
         <div class="card-body">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
             @*input Id y Boton buscar*@
             <div class="row">
                 <div class="col-3">
@@ -111,8 +112,11 @@
                     <div class="col-6">
                         <label for="txtDescripcion" class="form-label"> Descripción:</label>
                         <InputSelect class="form-select" @bind-Value="empacado.Producido">
-                       
-                             @foreach (var productos in listaProductos)
+                            @if (empacado.Producido == 0)
+                            {
+                             empacado.Producido = listaProductosEmpacados.FirstOrDefault().ProductoId;
+                            }
+                             @foreach (var productos in listaProductosEmpacados)
                              {
                                  <option value="@productos.ProductoId">@productos.Descripcion</option> 
                              }
@@ -142,13 +146,15 @@
     public Empacados empacado { get; set; } = new Empacados();
     public DetalleEmpacados detalleEmpacado{ get; set; } = new DetalleEmpacados();
     public  List<Productos> listaProductos=  new List<Productos>();
+    public  List<Productos> listaProductosEmpacados=  new List<Productos>();
     
     
    
 
     protected override void OnInitialized()
     {
-        listaProductos= ProductosBLL.GetList(o=> true);
+        listaProductos= ProductosBLL.GetList(o=> o.Categoria=="Normal");
+        listaProductosEmpacados= ProductosBLL.GetList(o=> o.Categoria=="Empacado");
         if(EmpacadoId>0){
             empacado.EmpacadoId = EmpacadoId;
             Buscar();

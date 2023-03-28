@@ -3,9 +3,9 @@
 @inject ProductosBLL ProductosBLL
 
 <EditForm Model="producto" OnValidSubmit="Guardar">
-     <DataAnnotationsValidator/>
-     <ValidationSummary/>
+     
      <div class= "card text-primary">
+        
      
          <div class="card-header text-center  ">
             @*Encabezado*@
@@ -13,6 +13,8 @@
          </div>
      
         <div class="card-body">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
             <div class="row">
                 <div class="col-4">
                     <label for="txtID" class="form-label"> ID:</label>
@@ -48,6 +50,21 @@
                     <ValidationMessage For="@(() => producto.Existencia)" />
                 </div>
             </div>
+            <div class="row">
+                <div class="col-6">
+                    <label for="txtCategoria" class="form-label"> Categoria:</label>
+                    <InputSelect class="form-select" @bind-Value="producto.Categoria">
+                    @if (String.IsNullOrEmpty(producto.Categoria))
+                            {
+                             producto.Categoria = categorias.FirstOrDefault();
+                            }
+                         @foreach (var categoria in categorias )
+                         {
+                             <option value="@categoria">@categoria</option> 
+                         }
+                    </InputSelect>
+                </div>
+            </div>
             
             
         </div>
@@ -65,6 +82,7 @@
     [Parameter]
     public int ProductoId { get; set; }
     public Productos producto { get; set; } = new Productos();
+    public List<String> categorias = new List<String>(){"Normal", "Empacado"};
     
    
 

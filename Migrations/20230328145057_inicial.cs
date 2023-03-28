@@ -39,6 +39,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
                     Costo = table.Column<double>(type: "REAL", nullable: false),
                     Precio = table.Column<double>(type: "REAL", nullable: false),
+                    Categoria = table.Column<string>(type: "TEXT", nullable: false),
                     Existencia = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -69,13 +70,14 @@ namespace Parcial2_AP1_Wilber.Migrations
 
             migrationBuilder.InsertData(
                 table: "Productos",
-                columns: new[] { "ProductoId", "Costo", "Descripcion", "Existencia", "Precio" },
+                columns: new[] { "ProductoId", "Categoria", "Costo", "Descripcion", "Existencia", "Precio" },
                 values: new object[,]
                 {
-                    { 1, 10.0, "Mani", 100, 25.0 },
-                    { 2, 50.0, "Pistachos", 100, 120.0 },
-                    { 3, 25.0, "Pasas", 100, 50.0 },
-                    { 4, 25.0, "Ciruelas", 100, 50.0 }
+                    { 1, "Normal", 10.0, "Mani", 100, 25.0 },
+                    { 2, "Normal", 50.0, "Pistachos", 100, 120.0 },
+                    { 3, "Normal", 25.0, "Pasas", 100, 50.0 },
+                    { 4, "Normal", 25.0, "Ciruelas", 100, 50.0 },
+                    { 5, "Empacado", 100.0, "Mixto", 0, 150.0 }
                 });
 
             migrationBuilder.CreateIndex(

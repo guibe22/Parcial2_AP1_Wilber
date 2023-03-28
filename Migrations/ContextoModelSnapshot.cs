@@ -71,6 +71,10 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("Costo")
                         .HasColumnType("REAL");
 
@@ -92,6 +96,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         new
                         {
                             ProductoId = 1,
+                            Categoria = "Normal",
                             Costo = 10.0,
                             Descripcion = "Mani",
                             Existencia = 100,
@@ -100,6 +105,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         new
                         {
                             ProductoId = 2,
+                            Categoria = "Normal",
                             Costo = 50.0,
                             Descripcion = "Pistachos",
                             Existencia = 100,
@@ -108,6 +114,7 @@ namespace Parcial2_AP1_Wilber.Migrations
                         new
                         {
                             ProductoId = 3,
+                            Categoria = "Normal",
                             Costo = 25.0,
                             Descripcion = "Pasas",
                             Existencia = 100,
@@ -116,10 +123,20 @@ namespace Parcial2_AP1_Wilber.Migrations
                         new
                         {
                             ProductoId = 4,
+                            Categoria = "Normal",
                             Costo = 25.0,
                             Descripcion = "Ciruelas",
                             Existencia = 100,
                             Precio = 50.0
+                        },
+                        new
+                        {
+                            ProductoId = 5,
+                            Categoria = "Empacado",
+                            Costo = 100.0,
+                            Descripcion = "Mixto",
+                            Existencia = 0,
+                            Precio = 150.0
                         });
                 });
 

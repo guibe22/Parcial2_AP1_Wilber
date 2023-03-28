@@ -18,6 +18,7 @@ public class Contexto :DbContext
                     Descripcion= "Mani",
                     Costo=10,
                     Precio= 25,
+                    Categoria="Normal",
                     Existencia= 100
                 },
                 new Productos
@@ -26,6 +27,7 @@ public class Contexto :DbContext
                     Descripcion= "Pistachos",
                     Costo=50,
                     Precio= 120,
+                    Categoria="Normal",
                     Existencia= 100
                 },
                 new Productos
@@ -34,6 +36,7 @@ public class Contexto :DbContext
                     Descripcion= "Pasas",
                     Costo=25,
                     Precio= 50,
+                    Categoria="Normal",
                     Existencia= 100
                 },
                  new Productos
@@ -42,7 +45,17 @@ public class Contexto :DbContext
                     Descripcion= "Ciruelas",
                     Costo=25,
                     Precio= 50,
+                    Categoria="Normal",
                     Existencia= 100
+                },
+                new Productos{
+
+                    ProductoId= 5,
+                    Descripcion= "Mixto",
+                    Costo=100,
+                    Precio= 150,
+                    Categoria="Empacado",
+                    Existencia= 0
                 }
         );
      }
