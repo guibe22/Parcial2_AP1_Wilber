@@ -4,7 +4,7 @@
 @inject ProductosBLL ProductosBLL
 @inject NotificationService notify
 
-<EditForm Model="empacado" OnInvalidSubmit="Guardar">
+<EditForm Model="empacado" OnValidSubmit="Guardar" >
      <DataAnnotationsValidator/>
      <ValidationSummary/>
      <div class= "card text-primary">
@@ -23,7 +23,7 @@
                 </div>
 
                  <div class="col-3 d-flex align-items-end">
-                    <button type="button" class="btn btn-primary" @onclick="Buscar">
+                    <button type="button" class="btn btn-primary" @onclick="Buscar" >
                         <span class="oi oi-magnifying-glass"></span>
                     </button>
                 </div>
@@ -66,7 +66,7 @@
                     
                 </div>
                 <div class="col-3 d-flex align-items-end">
-                 <button type="button" class="btn btn-primary" @onclick="Agregar">
+                 <button type="button" class="btn btn-primary" @onclick="Agregar" >
                     Agregar
                 </button>
                 </div>
@@ -88,7 +88,7 @@
                             <td>@detalle.ProductoId</td> 
                             <td>@ProductosBLL.Buscar(detalle.ProductoId).Descripcion</td> 
                             <td>@detalle.Cantidad</td>
-                            <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
+                            <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2" type="button"
                                  @onclick=@(() => ElminarDetalle(detalle))> 
                                 <span class="oi oi-trash"></span>
                                 </button>
@@ -122,9 +122,9 @@
         </div>
         <div class="card-footer text-center fs-5 ">
              @*Botones*@
-             <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo"> Nuevo </button>
-             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" @onclick="Guardar"> Guardar </button>
-             <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar"> Eliminar </button>
+             <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo" type="button"> Nuevo </button>
+             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" type="submit"> Guardar </button>
+             <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar" type="button"> Eliminar </button>
          </div>
      </div>
 </EditForm>
