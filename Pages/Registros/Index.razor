@@ -51,10 +51,15 @@
             <div class="row">
                 <div class="col-4">
                     <label for="select" class="form-label">Producto:</label>
-                    <InputSelect class="form-select" @bind-Value="detalleEmpacado.ProductoId">
+                    <InputSelect class="form-select" @bind-Value="@detalleEmpacado.ProductoId">
+                        @if (detalleEmpacado.ProductoId == 0)
+                            {
+                             detalleEmpacado.ProductoId = listaProductos.FirstOrDefault().ProductoId;
+                            }
+                        
                          @foreach (var producto in listaProductos )
                          {
-                             <option value="@producto.ProductoId">@producto.Descripcion</option> 
+                             <option value="@producto.ProductoId" >@producto.Descripcion</option> 
                          }
                     </InputSelect>
                     
@@ -106,6 +111,7 @@
                     <div class="col-6">
                         <label for="txtDescripcion" class="form-label"> Descripción:</label>
                         <InputSelect class="form-select" @bind-Value="empacado.Producido">
+                       
                              @foreach (var productos in listaProductos)
                              {
                                  <option value="@productos.ProductoId">@productos.Descripcion</option> 
@@ -188,11 +194,11 @@
                     return;
                 }
             }
-        if(detalleEmpacado.Cantidad<0){
+        if(detalleEmpacado.Cantidad<=0){
              notify.ShowNotification("debe introducir una cantidad de producto mayor a 0 ", NotificationSeverity.Error);
             return;
         }
-        if(detalleEmpacado.ProductoId<0){
+        if(detalleEmpacado.ProductoId<=0){
             notify.ShowNotification("Debe solucionar un producto", NotificationSeverity.Error);
             return;
         }
@@ -235,6 +241,10 @@
         if(empacado.detalleEmpacados.Count<2) {
             notify.ShowNotification("debe seleccionar por lo menos dos productos en el detalle", NotificationSeverity.Warning);
             validacion=false;}
+        if(empacado.Producido<=0){
+            notify.ShowNotification("debe seleccionar un producido", NotificationSeverity.Warning);
+            validacion=false;
+        }
         
         
         return validacion;
@@ -247,7 +257,15 @@
            empacado.CantidadUtilizada = empacado.detalleEmpacados.Sum(o=> o.Cantidad);
            empacado.CantidadProducida= empacado.CantidadUtilizada *4;
            var productoEncontrado = ProductosBLL.Buscar(detalle.ProductoId);
-           listaProductos.Add(productoEncontrado);
+           if(productoEncontrado!=null){
+                var list = listaProductos.Find(p => p.ProductoId == productoEncontrado.ProductoId);
+                if(list==null){
+                     listaProductos.Insert(0,productoEncontrado);
+                }
+           }
+           
+           
+           
         }
 
        
