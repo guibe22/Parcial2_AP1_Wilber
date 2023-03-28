@@ -4,7 +4,7 @@
 @inject ProductosBLL ProductosBLL
 @inject NotificationService notify
 
-<EditForm Model="empacado" OnInvalidSubmit="Guardar">
+<EditForm Model="empacado" OnValidSubmit="Guardar">
      <DataAnnotationsValidator/>
      <ValidationSummary/>
      <div class= "card text-primary">
@@ -97,7 +97,7 @@
                     }
                 </tbody>
                 </table>
-                <label > Total = @empacado.Cantidad</label>
+                <label > Total = @empacado.CantidadUtilizada</label>
 
                 @*seccion de producidos*@
                 <h3>Producidos</h3>
@@ -105,7 +105,12 @@
                 <div class="row">
                     <div class="col-6">
                         <label for="txtDescripcion" class="form-label"> Descripción:</label>
-                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="empacado.Producido">
+                        <InputSelect class="form-select" @bind-Value="producto.ProductoId">
+                             @foreach (var productos in listaProductos)
+                             {
+                                 <option value="@productos.ProductoId">@productos.Descripcion</option> 
+                             }
+                        </InputSelect>
                     </div>
 
                     <div class="col-6">
@@ -118,7 +123,7 @@
         <div class="card-footer text-center fs-5 ">
              @*Botones*@
              <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo"> Nuevo </button>
-             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" @onclick="Guardar"> Guardar </button>
+             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" type="submit"> Guardar </button>
              <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar"> Eliminar </button>
          </div>
      </div>
@@ -152,16 +157,23 @@
 
     void Guardar(){
         if(!Validar()){ return;}
-        producto.Descripcion= empacado.Producido;
-        if(ProductosBLL.GetList(o => o.Descripcion==producto.Descripcion).Count==1 &&
-             !ProductosBLL.Existe(producto.ProductoId)){ 
-                 notify.ShowNotification("este Nombre de producto empacado ya existe", NotificationSeverity.Success);
-                return;}
+            
+            
+          var productoAnterior = ProductosBLL.Buscar(producto.ProductoId);
+         
+          if(productoAnterior!=null){
+             if(EmpacadosBLL.Existe(empacado.EmpacadoId)){
+            productoAnterior.Existencia-=empacado.Producido;
+            }
+            productoAnterior.Existencia+= producto.Existencia;
+            ProductosBLL.Guardar(productoAnterior);
+            empacado.Producido= producto.ProductoId;
+            empacado.CantidadProducida= producto.Existencia;
+            producto= new Productos();
+          }
         if(EmpacadosBLL.Guardar(empacado)){
             
-            producto.Precio=150;
-            producto.Costo= 100;
-            ProductosBLL.Guardar(producto);
+            
              notify.ShowNotification("Guardado correctamente", NotificationSeverity.Success);
             Nuevo();
         }
@@ -172,15 +184,13 @@
         var encontrado = EmpacadosBLL.Buscar(empacado.EmpacadoId);
         if(encontrado!=null){
             empacado= encontrado;
-            var productoEncontrado = ProductosBLL.Buscar(empacado.Producido);
-            if(productoEncontrado!=null){
-                producto= productoEncontrado;
-                 notify.ShowNotification("Encontrado correctamente", NotificationSeverity.Success);
-            }
-            else{
-                notify.ShowNotification("Este  Id no existe", NotificationSeverity.Error);
-            }
+            producto.Existencia = empacado.CantidadProducida;
+            producto.ProductoId= empacado.Producido;
+             notify.ShowNotification("encontrado Correctamente", NotificationSeverity.Success);
 
+        }
+        else{
+            notify.ShowNotification("No se pudo Encontrar", NotificationSeverity.Error);
         }
 
     }
@@ -204,8 +214,8 @@
         if(detalleEmpacado.Cantidad>0 && detalleEmpacado.ProductoId>0){
             
             empacado.detalleEmpacados.Add(detalleEmpacado);
-            empacado.Cantidad+= detalleEmpacado.Cantidad;
-            producto.Existencia= empacado.Cantidad*4;
+            empacado.CantidadUtilizada+= detalleEmpacado.Cantidad;
+            producto.Existencia= empacado.CantidadUtilizada*4;
             listaProductos.RemoveAll(o=> o.ProductoId == detalleEmpacado.ProductoId);
             detalleEmpacado = new DetalleEmpacados();
             
@@ -218,12 +228,19 @@
         empacado = new Empacados();
         detalleEmpacado= new DetalleEmpacados();
         producto= new Productos();
+        empacado.Fecha= DateOnly.FromDateTime(DateTime.Today);
+        listaProductos= ProductosBLL.GetList(o=>true);
 
     }
     void Eliminar(){
         if(EmpacadosBLL.Existe(empacado.EmpacadoId)){
+            var productoAnterior = ProductosBLL.Buscar(producto.ProductoId);
+            if(productoAnterior!=null){
+                productoAnterior.Existencia-= producto.Existencia;
+                ProductosBLL.Guardar(productoAnterior);
+            }
             if(EmpacadosBLL.Eliminar(empacado)){
-                ProductosBLL.Eliminar(producto);
+                
                 notify.ShowNotification("Eliminado Correctamente", NotificationSeverity.Success);
                  Nuevo();
             } 
@@ -233,11 +250,14 @@
     bool Validar(){
         bool validacion = true ;
         if(String.IsNullOrEmpty(empacado.Concepto)){ validacion= false;}
-        if(empacado.Cantidad<2){ validacion= false;}
+        if(empacado.CantidadUtilizada<2){ validacion= false;}
         if(empacado.detalleEmpacados.Count<2) {
             notify.ShowNotification("debe seleccionar por lo menos dos productos en el detalle", NotificationSeverity.Warning);
             validacion=false;}
-        if(string.IsNullOrEmpty(empacado.Producido)){validacion=false;}
+        if(producto.ProductoId==0){
+             notify.ShowNotification("debe seleccionar el producto en producidos", NotificationSeverity.Warning);
+        }
+      
         
         return validacion;
     }
@@ -246,8 +266,10 @@
         if(empacado.detalleEmpacados!=null && detalle!=null){
             empacado.detalleEmpacados.Remove(detalle);
            
-           empacado.Cantidad = empacado.detalleEmpacados.Sum(o=> o.Cantidad);
-           producto.Existencia= empacado.Cantidad *4;
+           empacado.CantidadUtilizada = empacado.detalleEmpacados.Sum(o=> o.Cantidad);
+           producto.Existencia= empacado.CantidadUtilizada *4;
+           var productoEncontrado = ProductosBLL.Buscar(detalle.ProductoId);
+           listaProductos.Add(productoEncontrado);
         }
 
        

@@ -21,8 +21,9 @@ namespace Parcial2_AP1_Wilber.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Fecha = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     Concepto = table.Column<string>(type: "TEXT", nullable: false),
-                    Producido = table.Column<string>(type: "TEXT", nullable: false),
-                    Cantidad = table.Column<int>(type: "INTEGER", nullable: false)
+                    Producido = table.Column<int>(type: "INTEGER", nullable: false),
+                    CantidadUtilizada = table.Column<int>(type: "INTEGER", nullable: false),
+                    CantidadProducida = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

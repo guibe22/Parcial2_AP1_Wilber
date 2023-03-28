@@ -44,7 +44,8 @@
                     <th>Fecha</th>
                     <th>Concepto</th>
                     <th>Producido</th>
-                    <th>Cantidad</th>
+                    <th>Cantidad Utilizada</th>
+                    <th>Cantidad Producida</th>
     
                     <th></th>
                 </tr>
@@ -58,7 +59,8 @@
                                 <td> @empacado.Fecha</td>
                                 <td> @empacado.Concepto</td>
                                 <td> @empacado.Producido</td>
-                                <td> @empacado.Cantidad</td>
+                                <td> @empacado.CantidadUtilizada</td>
+                                <td> @empacado.CantidadProducida</td>
                                <td><a href="/@empacado.EmpacadoId">Ver</a></td>
                             </tr>
                     }
@@ -94,11 +96,11 @@
                 break;
 
             case "4":
-                lista = EmpacadosBLL.GetList(o => (o.Producido ?? "").Contains(Criterio));
+                lista = EmpacadosBLL.GetList(o => o.Producido.ToString().Contains(Criterio));
                 break;
 
             case "5":
-                 lista = EmpacadosBLL.GetList(o => o.Cantidad.ToString().Contains(Criterio));
+                 lista = EmpacadosBLL.GetList(o => o.CantidadUtilizada.ToString().Contains(Criterio));
                 break;
 
           

@@ -9,10 +9,10 @@ public class Empacados
     public DateOnly Fecha { get; set; }
     [Required(ErrorMessage ="El Concepto es requerido.")]
     public String? Concepto { get; set; }
-    [Required(ErrorMessage =" El Nombre del nuevo Producto es Requerido.")]
-    public String? Producido { get; set; }
+    public int Producido { get; set; }
     [Required(ErrorMessage ="la Cantidad es Requerida.")]
-    public int Cantidad { get; set; }
+    public int CantidadUtilizada { get; set; }
+    public int CantidadProducida { get; set; }
     [ForeignKey("EmpacadosId")]
     public List<DetalleEmpacados> detalleEmpacados { get; set; } = new List<DetalleEmpacados>();
 }

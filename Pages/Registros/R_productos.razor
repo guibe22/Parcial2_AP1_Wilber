@@ -2,7 +2,7 @@
 @page "/R_Productos/{ProductoId:int}"
 @inject ProductosBLL ProductosBLL
 
-<EditForm Model="producto" OnInvalidSubmit="Guardar">
+<EditForm Model="producto" OnValidSubmit="Guardar">
      <DataAnnotationsValidator/>
      <ValidationSummary/>
      <div class= "card text-primary">
@@ -54,7 +54,7 @@
         <div class="card-footer text-center fs-5 ">
              @*Botones*@
              <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo"> Nuevo </button>
-             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" @onclick="Guardar"> Guardar </button>
+             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" type="submit"> Guardar </button>
              <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar"> Eliminar </button>
          </div>
      </div>
@@ -114,7 +114,7 @@
         if(String.IsNullOrEmpty(producto.Descripcion)){validacion= false;}
         if(producto.Costo<=0){validacion= false;}
         if(producto.Precio<=0){validacion= false;}
-        if(producto.Existencia<=0){validacion= false;}
+        if(producto.Existencia<0){validacion= false;}
         return validacion;
     }
 
