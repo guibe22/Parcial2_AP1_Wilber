@@ -41,27 +41,27 @@ public class EmpacadosBLL
              .Include(o =>  o.detalleEmpacados)
              .AsNoTracking()
              .SingleOrDefault();
-        var producido = _Contexto.Productos.Find(empacado.Producido);
         if(empacadoAnterior!=null){
             foreach (var detalle in empacadoAnterior.detalleEmpacados)
             {
                 var producto = _Contexto.Productos.Find(detalle.ProductoId);
                 if(producto!=null){
                     producto.Existencia += detalle.Cantidad;
-                    
                     _Contexto.Entry(producto).State = EntityState.Modified;
                 }
             }
-          
-            if(producido!=null){
-                producido.Existencia-= empacadoAnterior.CantidadProducida;
-                 producido.Existencia+= empacado.CantidadProducida;
-                _Contexto.Entry(producido).State = EntityState.Modified;
+            var producidoAnterior = _Contexto.Productos.Find(empacadoAnterior.Producido);
+            if(producidoAnterior!=null){
+                producidoAnterior.Existencia-= empacadoAnterior.CantidadProducida;
+                _Contexto.Entry(producidoAnterior).State = EntityState.Modified;
             }
             _Contexto.Entry(empacadoAnterior).State = EntityState.Detached;
         }
        
-    
+        
+        
+      
+
          foreach (var detalle in empacado.detalleEmpacados)
         {
             var producto = _Contexto.Productos.Find(detalle.ProductoId);
@@ -71,6 +71,13 @@ public class EmpacadosBLL
                 
             }
         }
+
+         var producido= _Contexto.Productos.Find(empacado.Producido);
+        if(producido!=null){
+            producido.Existencia+= empacado.CantidadProducida;
+             _Contexto.Entry(producido).State = EntityState.Modified;
+        }
+      
 
          var DetalleEliminar = _Contexto.Set<DetalleEmpacados>().Where(o => o.EmpacadosId == empacado.EmpacadoId);
          _Contexto.Set<DetalleEmpacados>().RemoveRange(DetalleEliminar);
