@@ -2,6 +2,7 @@
 @page "/{EmpacadoId:int}"
 @inject EmpacadosBLL EmpacadosBLL
 @inject ProductosBLL ProductosBLL
+@inject NotificationService notify
 
 <EditForm Model="empacado" OnInvalidSubmit="Guardar">
      <DataAnnotationsValidator/>
@@ -39,6 +40,7 @@
                 <div class="col-6">
                     <label for="txtConcepto" class="form-label"> Concepto:</label>
                     <input type="text"  id="txtConcepto" class="form-control" @bind-value="empacado.Concepto">
+                    <ValidationMessage For="@(() => empacado.Concepto)" />
                     
                 </div>
             </div>
@@ -87,7 +89,7 @@
                             <td>@ProductosBLL.Buscar(detalle.ProductoId).Descripcion</td> 
                             <td>@detalle.Cantidad</td>
                             <td> <button name="Btn" id="Btn" class="btn btn-danger mr-2"
-                                 @onclick=@(() => ElminarDetalle(detalle.DetalleEmpacadosId))> 
+                                 @onclick=@(() => ElminarDetalle(detalle))> 
                                 <span class="oi oi-trash"></span>
                                 </button>
                                 </td>
@@ -158,6 +160,7 @@
             producto.Precio=150;
             producto.Costo= 100;
             ProductosBLL.Guardar(producto);
+             notify.ShowNotification("Guardado correctamente", NotificationSeverity.Success);
             Nuevo();
         }
 
@@ -170,13 +173,23 @@
             var productoEncontrado = ProductosBLL.Buscar(empacado.Producido);
             if(productoEncontrado!=null){
                 producto= productoEncontrado;
-                 
+                 notify.ShowNotification("Encontrado correctamente", NotificationSeverity.Success);
+            }
+            else{
+                notify.ShowNotification("Este  Id no existe", NotificationSeverity.Error);
             }
 
         }
 
     }
     void Agregar(){
+         var productoEncontrado =ProductosBLL.Buscar(detalleEmpacado.ProductoId);
+            if(productoEncontrado!=null){
+                if(detalleEmpacado.Cantidad>productoEncontrado.Existencia){
+                    notify.ShowNotification($"ha superado la existencia del producto({productoEncontrado.Existencia})", NotificationSeverity.Error);
+                    return;
+                }
+            }
         
         if(detalleEmpacado.Cantidad>0 && detalleEmpacado.ProductoId>0){
             
@@ -200,6 +213,7 @@
         if(EmpacadosBLL.Existe(empacado.EmpacadoId)){
             if(EmpacadosBLL.Eliminar(empacado)){
                 ProductosBLL.Eliminar(producto);
+                notify.ShowNotification("Eliminado Correctamente", NotificationSeverity.Success);
                  Nuevo();
             } 
         }
@@ -209,15 +223,17 @@
         bool validacion = true ;
         if(String.IsNullOrEmpty(empacado.Concepto)){ validacion= false;}
         if(empacado.Cantidad<2){ validacion= false;}
-        if(empacado.detalleEmpacados.Count<2) {validacion=false;}
+        if(empacado.detalleEmpacados.Count<2) {
+            notify.ShowNotification("debe seleccionar por lo menos dos productos en el detalle", NotificationSeverity.Warning);
+            validacion=false;}
         if(string.IsNullOrEmpty(empacado.Producido)){validacion=false;}
         
         return validacion;
     }
 
-    void ElminarDetalle(int detalleIdSeleccionado){
-        if(empacado.detalleEmpacados!=null && detalleIdSeleccionado>0 ){
-            empacado.detalleEmpacados.RemoveAll(d => d.DetalleEmpacadosId ==detalleIdSeleccionado );
+    void ElminarDetalle(DetalleEmpacados detalle){
+        if(empacado.detalleEmpacados!=null && detalle!=null){
+            empacado.detalleEmpacados.Remove(detalle);
            
            empacado.Cantidad = empacado.detalleEmpacados.Sum(o=> o.Cantidad);
            producto.Existencia= empacado.Cantidad *4;
