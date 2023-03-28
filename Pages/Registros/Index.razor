@@ -4,7 +4,7 @@
 @inject ProductosBLL ProductosBLL
 @inject NotificationService notify
 
-<EditForm Model="empacado" OnValidSubmit="Guardar">
+<EditForm Model="empacado" OnInvalidSubmit="Guardar">
      <DataAnnotationsValidator/>
      <ValidationSummary/>
      <div class= "card text-primary">
@@ -105,7 +105,7 @@
                 <div class="row">
                     <div class="col-6">
                         <label for="txtDescripcion" class="form-label"> Descripción:</label>
-                        <InputSelect class="form-select" @bind-Value="producto.ProductoId">
+                        <InputSelect class="form-select" @bind-Value="empacado.Producido">
                              @foreach (var productos in listaProductos)
                              {
                                  <option value="@productos.ProductoId">@productos.Descripcion</option> 
@@ -115,7 +115,7 @@
 
                     <div class="col-6">
                         <label for="txtDescripcion" class="form-label"> Cantidad:</label>
-                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="producto.Existencia">
+                        <input type="text"  id="txtDescripcion" class="form-control" @bind-value="empacado.CantidadProducida">
                     </div>
                 </div>
          </div>
@@ -123,7 +123,7 @@
         <div class="card-footer text-center fs-5 ">
              @*Botones*@
              <button name="BtnNuevo" id="BtnNuevo" class="btn btn-primary mr-2" @onclick="Nuevo"> Nuevo </button>
-             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" type="submit"> Guardar </button>
+             <button name="BtnGuardar" id="BtnGuardar" class="btn btn-success mr-2" @onclick="Guardar"> Guardar </button>
              <button name="BtnEliminar" id="BtnEliminar" class="btn btn-danger mr-2" @onclick="Eliminar"> Eliminar </button>
          </div>
      </div>
@@ -136,7 +136,7 @@
     public Empacados empacado { get; set; } = new Empacados();
     public DetalleEmpacados detalleEmpacado{ get; set; } = new DetalleEmpacados();
     public  List<Productos> listaProductos=  new List<Productos>();
-    public Productos producto { get; set; } = new Productos();
+    
     
    
 
@@ -157,20 +157,8 @@
 
     void Guardar(){
         if(!Validar()){ return;}
-            
-            
-          var productoAnterior = ProductosBLL.Buscar(producto.ProductoId);
+        
          
-          if(productoAnterior!=null){
-             if(EmpacadosBLL.Existe(empacado.EmpacadoId)){
-            productoAnterior.Existencia-=empacado.Producido;
-            }
-            productoAnterior.Existencia+= producto.Existencia;
-            ProductosBLL.Guardar(productoAnterior);
-            empacado.Producido= producto.ProductoId;
-            empacado.CantidadProducida= producto.Existencia;
-            producto= new Productos();
-          }
         if(EmpacadosBLL.Guardar(empacado)){
             
             
@@ -184,8 +172,6 @@
         var encontrado = EmpacadosBLL.Buscar(empacado.EmpacadoId);
         if(encontrado!=null){
             empacado= encontrado;
-            producto.Existencia = empacado.CantidadProducida;
-            producto.ProductoId= empacado.Producido;
              notify.ShowNotification("encontrado Correctamente", NotificationSeverity.Success);
 
         }
@@ -215,7 +201,7 @@
             
             empacado.detalleEmpacados.Add(detalleEmpacado);
             empacado.CantidadUtilizada+= detalleEmpacado.Cantidad;
-            producto.Existencia= empacado.CantidadUtilizada*4;
+            empacado.CantidadProducida= empacado.CantidadUtilizada*4;
             listaProductos.RemoveAll(o=> o.ProductoId == detalleEmpacado.ProductoId);
             detalleEmpacado = new DetalleEmpacados();
             
@@ -227,18 +213,13 @@
     void Nuevo(){
         empacado = new Empacados();
         detalleEmpacado= new DetalleEmpacados();
-        producto= new Productos();
         empacado.Fecha= DateOnly.FromDateTime(DateTime.Today);
         listaProductos= ProductosBLL.GetList(o=>true);
 
     }
     void Eliminar(){
         if(EmpacadosBLL.Existe(empacado.EmpacadoId)){
-            var productoAnterior = ProductosBLL.Buscar(producto.ProductoId);
-            if(productoAnterior!=null){
-                productoAnterior.Existencia-= producto.Existencia;
-                ProductosBLL.Guardar(productoAnterior);
-            }
+            
             if(EmpacadosBLL.Eliminar(empacado)){
                 
                 notify.ShowNotification("Eliminado Correctamente", NotificationSeverity.Success);
@@ -254,10 +235,7 @@
         if(empacado.detalleEmpacados.Count<2) {
             notify.ShowNotification("debe seleccionar por lo menos dos productos en el detalle", NotificationSeverity.Warning);
             validacion=false;}
-        if(producto.ProductoId==0){
-             notify.ShowNotification("debe seleccionar el producto en producidos", NotificationSeverity.Warning);
-        }
-      
+        
         
         return validacion;
     }
@@ -267,7 +245,7 @@
             empacado.detalleEmpacados.Remove(detalle);
            
            empacado.CantidadUtilizada = empacado.detalleEmpacados.Sum(o=> o.Cantidad);
-           producto.Existencia= empacado.CantidadUtilizada *4;
+           empacado.CantidadProducida= empacado.CantidadUtilizada *4;
            var productoEncontrado = ProductosBLL.Buscar(detalle.ProductoId);
            listaProductos.Add(productoEncontrado);
         }
