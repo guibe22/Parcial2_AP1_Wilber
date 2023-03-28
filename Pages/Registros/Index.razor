@@ -190,6 +190,14 @@
                     return;
                 }
             }
+        if(detalleEmpacado.Cantidad<0){
+             notify.ShowNotification("debe introducir una cantidad de producto mayor a 0 ", NotificationSeverity.Error);
+            return;
+        }
+        if(detalleEmpacado.ProductoId<0){
+            notify.ShowNotification("Debe solucionar un producto", NotificationSeverity.Error);
+            return;
+        }
         
         if(detalleEmpacado.Cantidad>0 && detalleEmpacado.ProductoId>0){
             
@@ -201,6 +209,7 @@
             
             
         }
+       
 
     }
     void Nuevo(){
